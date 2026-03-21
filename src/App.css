@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme{
+    --color-primary:  #fdfcf8;
+    --color-secondary:#1F2937 ;
+    --color-accent: #f5344b;
+    /* --color-dark: ; */
+
+    --color-background-color:#e2ddc7;
+    --color-text-color: black;
+
+}
+
+.apply-border{
+    @apply border border-solid border-red-700;
+    
+}
+
+
+/** general */
+*{
+    box-sizing: border-box;
+    font-family: Iosevka Charon;
+}
+
+/** Header*/
+.nav-container{
+    padding:0.75rem 2rem ;
+    box-shadow: 0 0 3px 1px rgba(0,0,0,0.1);
+}
