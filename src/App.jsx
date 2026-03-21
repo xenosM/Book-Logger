@@ -1,15 +1,19 @@
-import {  } from 'react'
+import {useState} from 'react'
 import './App.css'
 import Header from './Components/Header'
-
+import LibraryTab from './Components/LibraryTab'
+import AddBook from './Components/AddBook'
 
 function App() {
-
+  const [toggleTab, setToggleTab] = useState(true);
   return (
     <>
-    <main className='w-screen h-screen bg-background-color'>
-      <Header />
-    </main>
+    <div className='w-screen h-screen bg-background-color flex flex-col'>
+      <Header setToggleTab={setToggleTab} toggleTab={toggleTab}/>
+      <main className='apply-border flex items-center justify-center flex-1'>
+        {toggleTab?<LibraryTab />: <AddBook />}
+      </main>
+    </div>
     </>
   )
 }
