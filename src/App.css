@@ -1,21 +1,38 @@
 @import "tailwindcss";
+@tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 
 @theme{
-    --color-primary:  #fdfcf8;
-    --color-secondary:#1F2937 ;
+    --color-primary:  #F9F8F6;
+    --color-secondary:  #EFE9E3;
     --color-accent: #f5344b;
     /* --color-dark: ; */
 
-    --color-background-color:#e2ddc7;
+    --color-background-color:#D9CFC7;
     --color-text-color: black;
-
+    --color-button: #1F2937;
 }
 
 .apply-border{
     @apply border border-solid border-red-700;
     
 }
-
+.hello{
+    background-color: #c0b8b8;
+}
 
 /** general */
 *{
@@ -27,4 +44,21 @@
 .nav-container{
     padding:0.75rem 2rem ;
     box-shadow: 0 0 3px 1px rgba(0,0,0,0.1);
+}
+
+/** Library Tab */
+.library-tab-grid{
+    grid-auto-columns: 25%;
+    grid-template-rows: 50% 50%;
+    scroll-snap-type:x mandatory;
+
+}
+.library-tab-grid > div{
+    scroll-snap-align: start;
+    
+}
+
+/**Book Card */
+.book-card{
+    box-shadow: 0 0 10px 6px rgba(0,0,0,0.1);
 }

@@ -1,4 +1,6 @@
 export default function Header({ setToggleTab, toggleTab }) {
+  const handleToggle = () => setToggleTab((prev) => !prev);
+
   return (
     <>
       <header className="w-full h-16 p- flex items-center justify-center">
@@ -8,18 +10,14 @@ export default function Header({ setToggleTab, toggleTab }) {
           </div>
           <div className="nav-btn-wrapper">
             <button
-              onClick={() => {
-                setToggleTab((prevState) => !prevState);
-              }}
-              className="nav-btn mr-4 hover:text-accent"
+              onClick={handleToggle}
+              className="nav-btn mr-4 hover:text-accent "
               disabled={toggleTab}
             >
               Library
             </button>
             <button
-              onClick={() => {
-                setToggleTab((prevState) => !prevState);
-              }}
+              onClick={handleToggle}
               className="nav-btn hover:text-accent"
               disabled={!toggleTab}
             >
