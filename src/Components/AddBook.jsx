@@ -1,8 +1,12 @@
+import AddForm from "./Forms/AddForm";
 export default function AddBook() {
   return (
     <>
       <section className="h-11/12 w-11/12 bg-primary rounded-md">
-        <div className="grid-layout grid grid-cols-4"></div>
+        <h1 className="text-center font-semibold text-xl mt-1.5 mb-12">
+          Add a New Book
+        </h1>
+        <AddForm />
       </section>
     </>
   );

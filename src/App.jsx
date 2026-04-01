@@ -10,7 +10,7 @@ function App() {
     <>
       <div className="w-screen h-screen bg-background-color flex flex-col">
         <Header setToggleTab={setToggleTab} toggleTab={toggleTab} />
-        <main className=" flex items-center justify-center flex-1">
+        <main className="flex items-center justify-center flex-1">
           {toggleTab ? <LibraryTab /> : <AddBook />}
         </main>
       </div>
