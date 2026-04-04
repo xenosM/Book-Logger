@@ -1,3 +1,6 @@
+import DateInput from "../UI/DateInput";
+import TextArea from "../UI/TextArea";
+
 export default function AddForm() {
   const genres = [
     "Select a Genre",
@@ -22,6 +25,7 @@ export default function AddForm() {
     "Thriller",
     "True Crime",
   ];
+
   function onSubmit() {}
 
   return (
@@ -61,16 +65,15 @@ export default function AddForm() {
           })}
         </select>
       </div>
-      <div className="flex justify-center gap-20">
-        <input
-          className="outline-1 outline-secondary"
-          type="date"
-          name="publicationDate"
-        />
-        <input type="date" name="readingStartDate" />
-        <input type="date" name="readingEndDate" />
+      <div className="flex justify-center gap-20 mb-14">
+        <DateInput dateInputLabel="Publication Date" />
+        <DateInput dateInputLabel="Start reading date" />
+        <DateInput dateInputLabel="End reading date" />
       </div>
-      <div className="flex justify-between"></div>
+      <div className="flex justify-center gap-20">
+        <TextArea />
+        <TextArea />
+      </div>
       <div className="flex"></div>
     </form>
   );
