@@ -1,13 +1,12 @@
 // * MUI
 import Textarea from "@mui/joy/Textarea";
-import { maxWidth, width } from "@mui/system";
 
-export default function TextArea() {
+export default function TextArea({ inputType }) {
   const rowNumber = 8;
 
   return (
     <label className="w-4/12 text-sm font-semibold">
-      Likes
+      {inputType}
       <Textarea
         minRows={rowNumber}
         maxRows={rowNumber}
@@ -18,9 +17,7 @@ export default function TextArea() {
           fontWeight: "400",
           color: "black",
         }}
-        //   slots={{ textarea: "InnerTextarea" }}
-        //   slotProps={{ textarea: { placeholder: "A placeholder" } }}
-        placeholder="Enter what you liked about the book"
+        placeholder="Enter your opinion"
       />
     </label>
   );
