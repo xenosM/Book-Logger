@@ -1,5 +1,8 @@
+/* eslint-disable */
 //* MUI
 import Autocomplete from "@mui/joy/Autocomplete";
+import CircularProgress from "@mui/joy/CircularProgress";
+
 // * COMPONENTS
 import DateInput from "../UI/DateInput";
 import FileInput from "../UI/FileInput";
@@ -7,12 +10,15 @@ import TextArea from "../UI/TextArea";
 import RatingInput from "../UI/RatingInput";
 import SubmitButton from "../UI/SubmitButton";
 // * REACT
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AddForm() {
   //*STATES
-  const [bookTitleValue, setTitleValue] = new useState("");
-
+  const [bookTitleValue, setTitleValue] = useState("");
+  const [bookTitleInputValue, setTitleInputValue] = useState("");
+  const [booksData, setBooksData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  // *VARIABLES
   const genres = [
     "Select a Genre",
     "Action and Adventure",
@@ -36,28 +42,88 @@ export default function AddForm() {
     "Thriller",
     "True Crime",
   ];
+  const autoCompleteStyles = {
+    root: {
+      sx: {
+        "&::before": {
+          boxShadow: "none",
+        },
+        bgcolor: "transparent",
+        maxWidth: 320,
+        width: 320,
+      },
+    },
+    listbox: {
+      sx: {
+        bgcolor: "#F9F8F6",
+      },
+    },
+  };
+  const bookTitles = Array.from(
+    new Set(booksData.map((book) => book.title.toLowerCase().trim())),
+  );
+  console.log("books are: " + bookTitles);
 
+  //* USE EFFECT
+  useEffect(() => {
+    const value = bookTitleInputValue;
+    const delay = 500;
+    const URL = `https://openlibrary.org/search.json?q=${value}`;
+    //Ensures the API call is made at only a certain input character
+    if (value.trim().length <= 3 || bookTitles.includes(value)) {
+      // setBooksData([]);
+      return;
+    }
+
+    const delayTimer = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(URL);
+        if (!response.ok) {
+          throw new Error("Errorrr!!!!!!!!!");
+        }
+
+        const data = await response.json();
+        console.log(data.docs);
+        setBooksData(data.docs || []);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    }, delay);
+    return () => clearTimeout(delayTimer);
+  }, [bookTitleInputValue]);
+
+  //* FUNCTION
   function onSubmit() {}
-  function onTitleChange(e) {
-    setTitleValue(e.target.value);
-    console.log(bookTitleValue);
-  }
 
   return (
     <form action={onSubmit}>
       <div className="flex justify-center gap-20 mb-10">
-        {/* <input
-          className="outline-1 outline-secondary shadow-2xs px-2 py-1 rounded-sm w-2xs"
-          type="text"
-          name="bookTitle"
-          placeholder="Enter Book Name"
-          required
+        <Autocomplete
+          options={bookTitles}
+          freeSolo={true}
+          autoComplete
+          slotProps={autoCompleteStyles}
           value={bookTitleValue}
-          onChange={(e) => {
-            onTitleChange(e);
+          onChange={(e, newValue) => {
+            setTitleValue(newValue);
           }}
-        /> */}
-        <Autocomplete options={genres} />
+          inputValue={bookTitleInputValue}
+          onInputChange={(e, newInputValue) => {
+            setTitleInputValue(newInputValue);
+          }}
+          loading={loading}
+          endDecorator={
+            loading ? (
+              <CircularProgress
+                size="sm"
+                sx={{ bgcolor: "background.surface" }}
+              />
+            ) : null
+          }
+        />
+
         <input
           className="outline-1 outline-secondary shadow-2xs px-2 py-1 rounded-sm w-xs"
           type="text"
