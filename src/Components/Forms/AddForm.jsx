@@ -12,102 +12,133 @@ import SubmitButton from "../UI/SubmitButton";
 // * REACT
 import { useState, useEffect } from "react";
 
+// *VARIABLES
+const genres = [
+  "Select a Genre",
+  "Action and Adventure",
+  "Art & Photography",
+  "Biography",
+  "Children's",
+  "Contemporary",
+  "Crime",
+  "Fantasy",
+  "Graphic Novel",
+  "Historical Fiction",
+  "History",
+  "Horror",
+  "Humour",
+  "Memoir",
+  "Mystery",
+  "Philosophy",
+  "Romance",
+  "Science Fiction",
+  "Self-Help",
+  "Thriller",
+  "True Crime",
+];
+const autoCompleteStyles = {
+  root: {
+    sx: {
+      "&::before": {
+        boxShadow: "none",
+      },
+      bgcolor: "transparent",
+      maxWidth: 320,
+      width: 320,
+    },
+  },
+  listbox: {
+    sx: {
+      bgcolor: "#F9F8F6",
+    },
+  },
+};
+const delay = 600;
+
 export default function AddForm() {
   //*STATES
   const [bookTitleValue, setTitleValue] = useState("");
   const [bookTitleInputValue, setTitleInputValue] = useState("");
-  const [booksData, setBooksData] = useState([]);
+
+  const [apiData, setApiData] = useState([]);
+  const [selectedBook, setSelectedBook] = useState({});
   const [loading, setLoading] = useState(false);
-  // *VARIABLES
-  const genres = [
-    "Select a Genre",
-    "Action and Adventure",
-    "Art & Photography",
-    "Biography",
-    "Children's",
-    "Contemporary",
-    "Crime",
-    "Fantasy",
-    "Graphic Novel",
-    "Historical Fiction",
-    "History",
-    "Horror",
-    "Humour",
-    "Memoir",
-    "Mystery",
-    "Philosophy",
-    "Romance",
-    "Science Fiction",
-    "Self-Help",
-    "Thriller",
-    "True Crime",
-  ];
-  const autoCompleteStyles = {
-    root: {
-      sx: {
-        "&::before": {
-          boxShadow: "none",
-        },
-        bgcolor: "transparent",
-        maxWidth: 320,
-        width: 320,
-      },
-    },
-    listbox: {
-      sx: {
-        bgcolor: "#F9F8F6",
-      },
-    },
-  };
-  const bookTitles = Array.from(
-    new Set(booksData.map((book) => book.title.toLowerCase().trim())),
-  );
-  console.log("books are: " + bookTitles);
 
-  //* USE EFFECT
-  useEffect(() => {
-    const value = bookTitleInputValue;
-    const delay = 500;
-    const URL = `https://openlibrary.org/search.json?q=${value}`;
-    //Ensures the API call is made at only a certain input character
-    if (value.trim().length <= 3 || bookTitles.includes(value)) {
-      // setBooksData([]);
-      return;
-    }
-
-    const delayTimer = setTimeout(async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(URL);
-        if (!response.ok) {
-          throw new Error("Errorrr!!!!!!!!!");
-        }
-
-        const data = await response.json();
-        console.log(data.docs);
-        setBooksData(data.docs || []);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-      }
-    }, delay);
-    return () => clearTimeout(delayTimer);
-  }, [bookTitleInputValue]);
+  //* VARIABLES
+  const bookTitles = getBookTitles();
 
   //* FUNCTION
   function onSubmit() {}
+
+  async function getBookData(URL) {
+    try {
+      const response = await fetch(URL);
+      if (!response.ok) {
+        throw new Error("Errorrr!!!!!!!!!");
+      }
+      const data = await response.json();
+      const validBooks = data.docs.filter(
+        (book) =>
+          book.title &&
+          book.author_name &&
+          book.key &&
+          book.first_publish_year &&
+          book.cover_i,
+      );
+      setApiData(validBooks || []);
+    } catch (err) {
+      setApiData([]);
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+  function getBookTitles() {
+    return apiData.map((book) => {
+      return {
+        title: book.title,
+        id: book.key,
+      };
+    });
+  }
+
+  //* USE EFFECT
+  useEffect(() => {
+    const value = bookTitleInputValue.trim();
+    const URL = `https://openlibrary.org/search.json?title=${encodeURIComponent(value)}&fields=title,key,first_publish_year,cover_i,author_name`;
+
+    //Ensures the API call is made at only a certain input character
+    if (
+      value.length <= 3 ||
+      bookTitles.includes(value.toLowerCase()) ||
+      value == bookTitleValue
+    ) {
+      setApiData([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const delayTimer = setTimeout(() => {
+      getBookData(URL);
+    }, delay);
+
+    return () => clearTimeout(delayTimer);
+  }, [bookTitleInputValue]);
 
   return (
     <form action={onSubmit}>
       <div className="flex justify-center gap-20 mb-10">
         <Autocomplete
           options={bookTitles}
+          getOptionKey={(book) => book.id || ""}
+          getOptionLabel={(book) => book.title || ""}
           freeSolo={true}
-          autoComplete
           slotProps={autoCompleteStyles}
           value={bookTitleValue}
           onChange={(e, newValue) => {
             setTitleValue(newValue);
+            setSelectedBook(apiData.find((book) => (book.id = newValue.id)));
           }}
           inputValue={bookTitleInputValue}
           onInputChange={(e, newInputValue) => {
@@ -129,6 +160,9 @@ export default function AddForm() {
           type="text"
           name="authorName"
           placeholder="Enter Author Name"
+          defaultValue={
+            selectedBook.author_name ? selectedBook.author_name : ""
+          }
           required
         />
         <select
